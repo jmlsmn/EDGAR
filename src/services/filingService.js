@@ -1,12 +1,13 @@
 import Parser from 'rss-parser';
 import { parse as htmlParser } from 'node-html-parser';
 import { fetcher } from '../util/fetchHelper';
-import config from '../config/config';
+import cacheFactory from '../util/cacheFactory';
+import config from '../config';
 import { 
     FILING_ERROR, 
     TICKER_ERROR, 
     TICKER_NOT_FOUND 
-} from '../constants/constants';
+} from '../constants';
 
 /**
  * RSS Parser
@@ -21,7 +22,12 @@ const parser = new Parser();
  */
 export async function getFilings(ticker, skip = 0, take = 40) {
     if (!ticker) return [];
-    const tickerId = await retrieveTickerId(ticker);
+
+    let tickerId = cacheFactory.instance().get(ticker);
+    if(!tickerId) { 
+        tickerId = await retrieveTickerId(ticker);
+        cacheFactory.instance().set(ticker, tickerId);
+    }
     return await retrieveFilingFeed(tickerId, skip, take);
 }
 
