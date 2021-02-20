@@ -1,8 +1,7 @@
 # EDGAR
 EDGAR is a simple Node/Express web application to retrieve SEC filings by company ticker symbol.
 
-See it running here:
-
+See it running here: https://edgar-aaeu4.ondigitalocean.app/
 
 ## Prerequisites
 
