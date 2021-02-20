@@ -42,7 +42,7 @@
 
         function dateFormatter(value, row) {
             var date = new Date(value);
-            return date.toLocaleDateString() + date.toLocaleTimeString();
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
         }
 
         $(function () {
