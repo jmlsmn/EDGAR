@@ -65,7 +65,7 @@ async function retrieveFilingFeed(tickerId, skip, take) {
             return {
                 name: item.title,
                 filingDate: item.pubDate,
-                filingsUrl: await extractFilingUrl(item.link)
+                filingUrl: await extractFilingUrl(item.link)
             }
         }
     ));
@@ -82,7 +82,7 @@ async function retrieveFilingFeed(tickerId, skip, take) {
  */
 async function extractFilingUrl(indexUrl) {
     const fileExtension = '.htm';
-    if (!indexUrl || !indexUrl.endsWith(fileExtension)) return [];
+    if (!indexUrl || !indexUrl.endsWith(fileExtension)) return '';
 
     const headerUrl = indexUrl.replace(fileExtension,`-headers${fileExtension}`);
 
