@@ -20,7 +20,9 @@ Get dependencies:
 Run:
 
     $npm start
-    Navigate to http://localhost:3000/ or http://localhost:3000/filings?ticker=AAPL(to hit the api directly) in your browser.
+    
+    Navigate to http://localhost:3000/ 
+    or http://localhost:3000/filings?ticker=AAPL (to hit the api directly) in your browser.
 
 Run Tests:
 
