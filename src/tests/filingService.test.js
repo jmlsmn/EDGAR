@@ -19,6 +19,45 @@ test('getFilings should return empty array if passed an emtpy ticker', async () 
     expect(await filingService.getFilings('')).toEqual([]);
 });
 
+test('getFilings should return number of results based on take param', async ()=> {
+    //Arrange
+    const take = 13;
+    const ticker = 'AAPL';
+    const tickerId = 12345;
+    cacheFactory.init();
+    const response = Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => {
+            return { hits: {
+                hits: [{_id: tickerId}]
+            }};
+        },
+    });
+    fetch.mockImplementation(()=> response);
+
+    const company = {
+        title: 'Company Name',
+        items: []
+    };
+
+    for(let i = 0; i < 20; i++) {
+        company.items.push({
+            title: '10-K',
+            pubDate: '2021-01-01',
+            link: 'https://example.com/'
+        });
+    }
+    const feedResponse = Promise.resolve(company);
+    Parser.prototype.parseURL.mockImplementation(() => feedResponse);
+
+    //Act
+    const results = await filingService.getFilings(ticker, 0, take);
+
+    //Assert
+    expect(results.filings.length).toEqual(take);
+});
+
 test('getFilings should save ticker to cache', async () => {
     //Arrange
     const ticker = 'AAPL';

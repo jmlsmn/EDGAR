@@ -28,7 +28,8 @@ export async function getFilings(ticker, skip = 0, take = 40) {
         tickerId = await retrieveTickerId(ticker);
         cacheFactory.instance().set(ticker, tickerId);
     }
-    return await retrieveFilingFeed(tickerId, skip, take);
+    
+    return await retrieveFilingFeed(tickerId, skip, getPageLimit(take), take);
 }
 
 /**
@@ -56,8 +57,8 @@ async function retrieveTickerId(ticker) {
  * @param {int} skip - Number of records to skip
  * @param {int} take - Number of records to take
  */
-async function retrieveFilingFeed(tickerId, skip, take) {
-    const feedUrl = `${config.filingFeedUrl}&CIK=${tickerId}&start=${skip}&count=${take}`;
+async function retrieveFilingFeed(tickerId, skip, upperLimit, take) {
+    const feedUrl = `${config.filingFeedUrl}&CIK=${tickerId}&start=${skip}&count=${upperLimit}`;
     const feed = await parser.parseURL(feedUrl);
 
     const results = await Promise.all(
@@ -72,7 +73,7 @@ async function retrieveFilingFeed(tickerId, skip, take) {
 
     return {
         companyName: feed.title,
-        filings: results
+        filings: results.slice(0, parseInt(take))
     };
 }
 
@@ -101,4 +102,15 @@ async function extractFilingUrl(indexUrl) {
     const filename = hrefResult ? hrefResult.getAttribute('href') : '';
 
     return hrefResult && filename ? `${documentBaseUrl}${filename}` : '';
+}
+
+/**
+ * Returns the pre-defined upper limit page limit
+ * @param {number} take 
+ */
+function getPageLimit(take) {
+    const pageLimit = 
+        config.pageLimits.find(x => take > x.lower && take < x.upper);
+
+    return pageLimit ? pageLimit.upper : take
 }
